@@ -27,7 +27,7 @@ function close() {
         
         <div class="modal-content">
           <div class="modal-header">
-            <h3>{{ title }}</h3>
+            <h5>{{ title }}</h5>
             <button class="close-btn" @click="close">×</button>
           </div>
 
@@ -64,7 +64,7 @@ function close() {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  width: 400px;
+  width: 500px;
   max-width: 90%;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
