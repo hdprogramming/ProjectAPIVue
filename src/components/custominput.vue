@@ -35,7 +35,7 @@
 
     <div class="formvaluearea" v-if="xtype === 'CategoryBox'">
         <CategoryBox 
-            EditMode="true"
+            :EditMode="true"
             v-model:CategoriesIDs="proxyModel" 
         />
         <label :for="uniqueId" class="static-label">{{ label }}</label>
@@ -58,7 +58,20 @@
        />
        <label :for="uniqueId" class="static-label">{{ label }}</label>
     </div>
-
+    <div class="formvaluearea" v-if="xtype === 'IconPicker'">
+       <div class="icon-picker-container">
+          <div 
+            class="icon-item" 
+            v-for="_icon in icons" 
+            :key="_icon"
+            :class="{ 'selected': _icon.substring(3) === modelValue }" 
+            @click="$emit('update:modelValue', _icon.substring(3))"
+          >
+            <i class="fa fa-lg" :class="_icon"></i>
+          </div>
+       </div>
+       <label :for="uniqueId" class="static-label">{{ label }}</label>
+    </div>
   </div>
 </template>
 
@@ -86,31 +99,27 @@ const proxyModel = computed({
     get() { return props.modelValue },
     set(val) { emit('update:modelValue', val); }
 })
-/* --- TARİH FORMATLAMA MANTIĞI --- */
 
-// 1. Gelen Veriyi (modelValue) Input'un anlayacağı YYYY-MM-DD formatına çevir
+/* --- ICON LISTESİ --- */
+const icons = [
+  "fa-plug", "fa-microchip", "fa-magnet", "fa-recycle",
+  "fa-battery-full", "fa-calculator", "fa-bolt", "fa-sliders", // fa-batteryFull -> fa-battery-full düzeltildi
+  "fa-vial", "fa-rocket", "fa-atom", "fa-code", "fa-cog"
+];
+
+/* --- TARİH FORMATLAMA MANTIĞI --- */
 const dateModel = computed(() => {
   if (!props.modelValue) return '';
-  
-  // Eğer gelen veri "2023-12-05T00:00:00" gibiyse sadece ilk 10 karakteri al
   if (typeof props.modelValue === 'string') {
      return props.modelValue.substring(0, 10);
   }
-  
-  // Eğer gelen veri JS Date Objesi ise stringe çevir
   if (props.modelValue instanceof Date) {
      return props.modelValue.toISOString().split('T')[0];
   }
-
   return props.modelValue;
 });
 
-// 2. Inputtan seçilen tarihi (YYYY-MM-DD) olduğu gibi yukarı emit et
 const handleDateUpdate = (val) => {
-  // Eğer backend TAM tarih istiyorsa (Örn: 2023-10-20T00:00:00) burayı açabilirsin:
-  // val = val + 'T00:00:00'; 
-  
-  // Genelde backend sadece string tarihi (2023-10-20) kabul eder, bu yeterlidir:
     emit('update:modelValue', val);
 }
 </script>
@@ -208,7 +217,41 @@ const handleDateUpdate = (val) => {
     border-radius: 4px;
     z-index: 2;
 }
+/* --- ICON PICKER STİLLERİ --- */
+.icon-picker-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background: linear-gradient(175deg, #ffffff 0%, #f9f9f9 100%);
+    min-height: 55px; /* Input yüksekliğine yakın olsun */
+}
 
+.icon-item {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #555;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.icon-item:hover {
+    background-color: rgba(0, 184, 148, 0.1);
+    color: #00b894;
+}
+
+.icon-item.selected {
+    background-color: #00b894;
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 184, 148, 0.3);
+}
 /* Checkbox */
 .checkbox-wrapper {
     display: flex;    

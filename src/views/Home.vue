@@ -27,15 +27,16 @@
       <div class="form-group">
       <h2>Projeyi Düzenle</h2>  
       <div v-if="PageNo==1">
-              
+        <custominput label="Proje Simgesi" xtype="IconPicker" v-model="modalVals.icon"/>       
         <custominput label="Proje Adı" v-model="modalVals.title" />
         <custominput  xtype="Textarea" label="Açıklama" v-model="modalVals.description" />
         <custominput type="checkbox" xtype="Checkbox" label="Yayındamı" v-model="modalVals.isAlive"/>
-         <custominput v-if="isAdmin" xtype="Date" label="Tarih" v-model="modalVals.date"/>
        </div>
        <div v-if="PageNo==2">
         <custominput  xtype="CategoryBox" label="Kategoriler" v-model="modalVals.categoryIds" />
         <custominput  xtype="StatusBox" label="Durum" v-model="modalVals.statusID" />
+          <custominput v-if="isAdmin" xtype="Date" label="Tarih" v-model="modalVals.date"/>
+      
        </div>
        <div class="buttonarea">
          <button v-if="PageNo<maxpage" class="btn btn-primary" @click="pagenext()">İleri</button>
@@ -205,7 +206,7 @@ try {
 const oldproject = projects.value.find((p) => p.id == _id);
 
 // 1. Kontrol etmek istediğin alanları buraya yaz (Whitelist mantığı)
-const fieldsToCheck = ['title', 'description','date', 'statusID',
+const fieldsToCheck = ['title','icon', 'description','date', 'statusID',
 'categoryIds','isAlive']; 
 
 // 2. Sadece bu alanlar için döngü kur
