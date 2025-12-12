@@ -3,16 +3,18 @@
     <div class="topbar">
       <a href="#" class="brand">
         <i class="fa-solid fa-layer-group"></i>
-        <span class="headtext">Admin Paneli</span>
+        <span class="headtext">ProjectAPI</span>
       </a>
       <nav>
         <RouterLink to="/">Anasayfa</RouterLink> |
+         <RouterLink to="/Projects">Projelerim</RouterLink> |
         <template v-if="!isAuthenticated">
           <RouterLink to="/login">Giriş Yap</RouterLink> |
           <RouterLink to="/register">Kayıt Ol</RouterLink>
         </template>
         <template v-else>
           <RouterLink to="/profile">Profilim</RouterLink>
+           <RouterLink to="/myfiles">Yüklenen Dosyalarım</RouterLink>
           <template v-if="isAdmin">
             | <RouterLink to="/admin">Admin Panel</RouterLink>
           </template>
@@ -63,6 +65,10 @@ const logout = () => {
   --primary-hover: #1b5e20;
   --danger-color: #d32f2f;
   --danger-hover: #b71c1c;
+   --warning-color: #d3732fff;
+  --warning-hover: #ba6528ff;
+  --recovery-color:rgb(0,200,200);
+  --recovery-hover:rgb(0,150,150);
   --text-color: #333;
   --text-light: #666;
   --border-color: #e0e0e0;
@@ -165,7 +171,10 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-
+.card-navigate{
+  display:flex;
+  justify-content:space-between;
+}
 .card-title {
   font-family: "Oswald", sans-serif;
   font-size: 1.3rem;
@@ -295,7 +304,20 @@ input[type="password"]:focus {
 .btn-danger:hover {
   background: var(--danger-hover);
 }
-
+.btn-recover {
+  background: var(--recovery-color);
+  color: white;
+}
+.btn-recover:hover {
+  background: var(--recovery-hover);
+}
+.btn-warning {
+  background: var(--warning-color);
+  color: white;
+}
+.btn-warning:hover {
+  background: var(--warning-hover);
+}
 /* Küçük Buton (Tablo için) */
 .btn-sm {
   padding: 6px 12px;
@@ -316,7 +338,7 @@ input[type="password"]:focus {
   margin: 10px 0;
   font-size: 0.9em;
   min-width: 600px;
-  border-radius: 8px 8px 0 0;
+  border-radius: 3px 3px 0 0;
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
@@ -324,6 +346,12 @@ input[type="password"]:focus {
   background-color: #009879;
   color: #ffffff;
   text-align: left;
+}
+.redhead th {
+  background-color: rgb(150, 0, 0) !important;
+}
+.redhead tr:last-of-type {
+  border-bottom: 1px solid rgb(150, 0, 0) !important;
 }
 .fl-table th,
 .fl-table td {

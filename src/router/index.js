@@ -4,6 +4,8 @@ import Login from '@/views/Login.vue';
 import Register from '@/views/Register.vue';
 import Profile from '@/views/Profile.vue';
 import AdminPanel from '@/views/AdminPanel.vue';
+import Projects from '@/views/Projects.vue'
+import MyFiles from '@/views/MyFiles.vue'
 // Eğer ana sayfanız varsa
 import Home from '@/views/Home.vue'; 
 
@@ -14,6 +16,11 @@ const router = createRouter({
       path: '/',
       name: 'Home',
       component: Home // Ana sayfa component'iniz
+    },
+     {
+      path: '/Projects',
+      name: 'Projects',
+      component: Projects // Ana sayfa component'iniz
     },
     {
       path: '/login',
@@ -31,6 +38,12 @@ const router = createRouter({
       path: '/profile',
       name: 'Profile',
       component: Profile,
+      meta: { requiresAuth: true } // Giriş gerektirir (Normal Kullanıcı veya Admin)
+    },
+     {
+      path: '/myfiles',
+      name: 'MyFiles',
+      component: MyFiles,
       meta: { requiresAuth: true } // Giriş gerektirir (Normal Kullanıcı veya Admin)
     },
     {

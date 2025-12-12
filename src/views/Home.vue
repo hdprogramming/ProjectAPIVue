@@ -1,7 +1,7 @@
 <template>
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title">Proje Yönetimi</h2>
+        <h2 class="card-title">Projeler</h2>
         
         <div class="header-actions">            
             <select v-model="sortOption" id="tableFilter" class="form-select">
@@ -22,29 +22,7 @@
             </div>
         </div>
     </div>
-    <modal v-model="isModalOpen">
-      
-      <div class="form-group">
-      <h2>Projeyi Düzenle</h2>  
-      <div v-if="PageNo==1">
-        <custominput label="Proje Simgesi" xtype="IconPicker" v-model="modalVals.icon"/>       
-        <custominput label="Proje Adı" v-model="modalVals.title" />
-        <custominput  xtype="Textarea" label="Açıklama" v-model="modalVals.description" />
-        <custominput type="checkbox" xtype="Checkbox" label="Yayındamı" v-model="modalVals.isAlive"/>
-       </div>
-       <div v-if="PageNo==2">
-        <custominput  xtype="CategoryBox" label="Kategoriler" v-model="modalVals.categoryIds" />
-        <custominput  xtype="StatusBox" label="Durum" v-model="modalVals.statusID" />
-          <custominput v-if="isAdmin" xtype="Date" label="Tarih" v-model="modalVals.date"/>
-      
-       </div>
-       <div class="buttonarea">
-         <button v-if="PageNo<maxpage" class="btn btn-primary" @click="pagenext()">İleri</button>
-        <button v-if="PageNo>1" class="btn btn-primary" @click="pageback()">Geri</button>
-         <button class="btn btn-primary" @click="updateProject(modalVals.id)">Güncelle</button>
-        </div>
-        </div>
-      </modal>
+    
     <div class="table-container">
         <table class="fl-table">
             <thead>
@@ -56,12 +34,11 @@
                     <th>Son Değiştirme</th>
                     <th>Durum</th>
                     <th>Kategoriler</th>
-                    <th>Yayında mı?</th>
-                    <th v-if="isAuthenticated" style="text-align: center;">İşlem</th>
+                                       
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="project in filteredProjects" :key="project.id">
+                <tr v-for="project in filteredProjects" :key="project.id" >
                     <td><i :class="`fa fa-2x fa-${project.icon}`" /></td>
                     <td><strong>{{project.title}}</strong></td>
                     <td>{{project.description}}</td>
@@ -69,17 +46,8 @@
                     <td>{{project.lastdate}}</td>
                     <td>{{project.status}}</td>
                     <td><CategoryBox :CategoriesIDs="project.categoryIds"/></td>
-                    <td>
-                        <span :class="project.isAlive ? 'text-success' : 'text-danger'">
-                             {{project.isAlive ? "Evet" : "Hayır"}}
-                        </span>
-                    </td>
-                    <td v-if="isAuthenticated" style="text-align: center;">
-                    <div  style="display:flex;flex-direction:row">
-                         <button class="btn btn-primary btn-sm" @click="openEditModal(project)"><i class="fa-solid fa-edit"></i> </button>
-                        <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i> </button>
-                    </div>
-                     </td>
+                   
+                    
                 </tr>
                 
                 <tr v-if="filteredProjects.length === 0 && !loading">
@@ -90,11 +58,14 @@
             </tbody>
         </table>
     </div>
+     
 </div>
 </template>
 <style scoped>
 .buttonarea{
     display:flex;
+    justify-content:center;    
+    align-content:center;
 }
 .categoryarea{
     position:relative;
@@ -190,7 +161,8 @@ const fetchProjects = async () => {
     try {
         loading.value = true;
         let response = await api.get(`/Projects?page=1`); 
-        projects.value = response.data;        
+        projects.value = response.data.filter(item => item.isAlive);
+            
     } catch (error) {
         console.error(error);
     } finally {
@@ -232,6 +204,14 @@ console.log(updateData);
         loading.value = false;
         isModalOpen.value = false;
     }
+}
+const fetchFiles=async()=>{
+  try {
+    let response=await api.get("/Uploads/MyFiles");
+   console.log(response.data);
+  } catch (error) {
+    
+  }
 }
 onMounted(fetchProjects);
 </script>

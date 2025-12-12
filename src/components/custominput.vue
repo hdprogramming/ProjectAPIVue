@@ -11,7 +11,33 @@
        />
        <label :for="uniqueId">{{ label }}</label>
     </div>
+    <div class="formvaluearea" v-if="xtype === 'CustomFile'">
+       <input 
+         type="file" 
+         :id="uniqueId"
+         ref="fileInputRef"
+         class="hidden-file-input"
+         @change="handleFileUpload"
+         v-bind="$attrs" 
+       />
+       
+       <div 
+         class="custom-file-display" 
+         :class="{ 'active': fileName }"
+         @click="triggerFileClick"
+       >
+          <span class="file-name-text">
+            {{ fileName || 'Dosya seçmek için tıklayın...' }}
+          </span>
+          <i class="fa fa-cloud-upload-alt upload-icon"></i>
+       </div>
 
+       <div v-if="fileName" class="file-clear-btn" @click="clearFile">
+          <i class="fa fa-times"></i>
+       </div>
+
+       <label :for="uniqueId" class="static-label">{{ label }}</label>
+    </div>
     <div v-if="xtype === 'Checkbox'" class="checkbox-wrapper">
        <input 
          type="checkbox"
@@ -76,7 +102,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch} from 'vue'
 import CategoryBox from '../components/categoriesbox.vue'
 import StatusBox from '@/components/statusbox.vue'
 
@@ -118,7 +144,39 @@ const dateModel = computed(() => {
   }
   return props.modelValue;
 });
+/* --- CUSTOM FILE MANTIĞI --- */
+const fileInputRef = ref(null);
+const fileName = ref('');
 
+// Eğer dışarıdan modelValue dolu gelirse (örn: edit modu) dosya adını göster
+watch(() => props.modelValue, (newVal) => {
+    if (newVal && newVal.name) {
+        fileName.value = newVal.name;
+    } else if (!newVal) {
+        fileName.value = '';
+    }
+}, { immediate: true });
+
+// Div'e tıklayınca gizli input'u tetikle
+const triggerFileClick = () => {
+    fileInputRef.value.click();
+}
+
+// Dosya seçilince çalışır
+const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        fileName.value = file.name;
+        emit('update:modelValue', file);
+    }
+}
+
+// Dosyayı temizle
+const clearFile = () => {
+    fileName.value = '';
+    emit('update:modelValue', null);
+    if(fileInputRef.value) fileInputRef.value.value = ''; // Native input'u sıfırla
+}
 const handleDateUpdate = (val) => {
     emit('update:modelValue', val);
 }
@@ -274,5 +332,76 @@ const handleDateUpdate = (val) => {
     color: #555;
     cursor: pointer;
     font-weight: 500;
+}
+/* --- CUSTOM FILE STYLES --- */
+.hidden-file-input {
+    display: none;
+}
+
+.custom-file-display {
+    width: 100%;
+    box-sizing: border-box;
+    /* Senin input stilinle aynı zemin */
+    background: linear-gradient(175deg, #ffffff 0%, #f9f9f9 100%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 16px 40px 12px 15px; /* Sağ tarafta silme butonu için boşluk */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    min-height: 52px; /* Input yüksekliğiyle eşleşmesi için */
+}
+
+.custom-file-display:hover {
+    border-color: #00b894;
+    background: #fff;
+}
+
+.file-name-text {
+    font-size: 10pt;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+/* Dosya seçilmemişken placeholder rengi */
+.custom-file-display:not(.active) .file-name-text {
+    color: #999; 
+}
+
+.upload-icon {
+    color: #00b894;
+    font-size: 1.2em;
+    margin-left: 10px;
+}
+
+/* Silme Butonu (X) */
+.file-clear-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background-color: #ff7675; /* Hafif kırmızı */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    z-index: 5;
+    transition: 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.file-clear-btn:hover {
+    background-color: #d63031;
+    transform: translateY(-50%) scale(1.1);
 }
 </style>
