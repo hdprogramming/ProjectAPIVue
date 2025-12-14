@@ -1,5 +1,6 @@
 <template>
   <div v-if="loading">Kullanıcılar yükleniyor...</div>
+  <div v-if="error">Hata:{{error}}</div>
   <div class="card">
     <div class="card-header">
       <h2 class="card-title">Proje Yönetimi</h2>
@@ -58,6 +59,11 @@
             label="Tarih"
             v-model="modalVals.date"
           />
+          <custominput 
+           xtype="Editor"
+           label="İçerik"
+           v-model="modalVals.content"
+           />
         </div>
         <div class="buttonarea">
           <button class="btn btn-primary" @click="updateProject(modalVals.id)">

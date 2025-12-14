@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // API'nizin temel URL'sini buraya yazın
-const API_URL = 'http://localhost:5098/api'; 
+export const API_URL = 'http://localhost:5098/api'; 
 
 const api = axios.create({
   baseURL: API_URL,

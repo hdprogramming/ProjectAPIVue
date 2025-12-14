@@ -8,6 +8,8 @@ import App from './App.vue';
 import router from './router'; 
 // 1. Pinia'yı import edin
 import { createPinia } from 'pinia'; 
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 // 2. Pinia instance'ını oluşturun
 const pinia = createPinia();
@@ -20,8 +22,10 @@ const app = createApp(App);
 // ----------------------------------------------------
 // KRİTİK ADIM: Router'ı uygulamaya 'use' ile ekleyin.
 // ----------------------------------------------------
+app.component('QuillEditor', QuillEditor)
 app.use(router);
 app.use(pinia);
+
 
 // Uygulamayı HTML'deki hedef elemente bağla
 app.mount('#app');

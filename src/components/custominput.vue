@@ -84,6 +84,15 @@
        />
        <label :for="uniqueId" class="static-label">{{ label }}</label>
     </div>
+    <div class="formvaluearea" v-if="xtype === 'Editor'">
+       <Modal v-model="isEditorModalOpen">
+        <Editor v-model="editorTempContent"/>
+       <button class="btn btn-primary" @click="closeEditor()">Güncelle</button>
+       </Modal>
+       
+       <button class="btn btn-primary" style="margin-top:10px" @click="openEditor()">Düzenle</button>
+       <label :for="uniqueId" class="static-label">{{ label }}</label>
+    </div>
     <div class="formvaluearea" v-if="xtype === 'IconPicker'">
        <div class="icon-picker-container">
           <div 
@@ -105,7 +114,31 @@
 import { computed, ref, watch} from 'vue'
 import CategoryBox from '../components/categoriesbox.vue'
 import StatusBox from '@/components/statusbox.vue'
+import Modal from '@/components/modal.vue'
+import Editor from '@/components/Editor.vue'
 
+const isEditorModalOpen=ref(false);
+// Editor için geçici içerik tutucu
+const editorTempContent = ref(''); 
+
+// Modal'ı açarken mevcut veriyi geçici değişkene al
+const openEditor = () => {
+    // Eğer modelValue null/undefined ise boş string ata
+    editorTempContent.value = props.modelValue || ''; 
+    isEditorModalOpen.value = true;
+}
+
+// "Güncelle" butonuna basınca çalışacak
+const saveEditorContent = () => {
+    // Geçici değişkeni ana modele (emit) gönder
+    emit('update:modelValue', editorTempContent.value);
+    isEditorModalOpen.value = false;
+}
+
+// Sadece kapatırsa kaydetme (İptal mantığı)
+const closeEditor = () => {
+    isEditorModalOpen.value = false;
+}
 const props = defineProps({
   label: { type: String, default: 'Label' },
   xtype:{ type: String, default: "General" },

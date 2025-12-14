@@ -320,6 +320,7 @@ input[type="password"]:focus {
 }
 /* Küçük Buton (Tablo için) */
 .btn-sm {
+  margin-left:2px;
   padding: 6px 12px;
   font-size: 0.8rem;
   border-radius: 4px;

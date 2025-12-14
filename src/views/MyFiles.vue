@@ -1,17 +1,11 @@
 <template>
+   <div v-if="loading">Kullanıcılar yükleniyor...</div>
+  <div v-if="error">Hata:{{error}}</div>
   <div class="page-wrapper">
     <div class="card">
       <div class="card-header">
         <h2 class="card-title">Yüklenen Dosyalar</h2>
-      </div>
-
-      <modal v-model="isNewModalOpen">
-        <div class="modal-container">
-          <img class="image2x" src="../assets/image.svg" />
-          <custominput xtype="CustomFile" label="resim" v-model="newFile" />
-          <button class="btn btn-primary" @click="uploadImage()">Yükle</button>
-        </div>
-      </modal>
+      </div>  
 
       <modal name="EditModal" v-model="isEditModalOpen">
         <div class="modal-container">
@@ -23,15 +17,12 @@
 
       <div class="table-container">
         <div class="file-container">
-          <div class="file-content newimage" @click="newImage()">
-            <img src="../assets/image.svg" />
-            <label>Yeni Resim Ekle</label>
-          </div>
+         
 
-         <FileCard v-for="file in myfiles" 
-            :key="file.id" 
-            :file="file"
+         <FileExplorer
+            :files="myfiles"
             @click-image="editImage"
+            @upload="uploadImage"
             @edit="editImage"
             @delete="deleteImage"/>
         </div>
@@ -39,15 +30,13 @@
     </div>
     <div class="card">
       <div class="card-header">
-        <h2 class="card-title">Geri Dönüşüm Kutusu</h2>
+        <h2 class="card-title" style="color:var(--danger-color)">Geri Dönüşüm Kutusu</h2>
       </div>
 
       <div class="file-container">
-        <FileCard 
-            v-for="file in mydeletedfiles" 
-            :key="file.id" 
-            :file="file"
-            :is-deleted="true"
+        <FileExplorer
+            :files="mydeletedfiles"
+            :DeletedFiles="true"
             @recover="recoverImage"
             @permanent-delete="permanentDeleteImage"
           />
@@ -116,37 +105,33 @@ import { ref, onMounted, computed } from "vue";
 import api from "@/services/api.js";
 import modal from "@/components/modal.vue";
 import custominput from "@/components/custominput.vue";
-import FileCard from "@/components/FileCard.vue"
+import FileExplorer from "@/components/FileExplorer.vue"
 const myfiles = ref([]);
 const mydeletedfiles = ref([]);
 const loading = ref(true);
 const error = ref(null);
 const success = ref(null);
 const isEditModalOpen = ref(false);
-const isNewModalOpen = ref(false);
 const selectedFile = ref({});
-const newFile = ref({});
-const newImage = async () => {
-  isNewModalOpen.value = true;
-};
+
+
 const editImage = async (file) => {
   selectedFile.value = { ...file };
   isEditModalOpen.value = true;
 };
-const uploadImage = async () => {
+const uploadImage = async (newFile) => {
   console.log(newFile.value);
   try {
     loading.value = true;
     let formdata = new FormData();
-    formdata.append("name", newFile.value.name);
-    formdata.append("image", newFile.value);
+    formdata.append("name", newFile.name);
+    formdata.append("image", newFile);
     let response = await api.post(`/Uploads/Image`, formdata, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
-    if (response.data) {
-      isNewModalOpen.value = false;
+    if (response.data) {     
       await fetchMyFiles();
       alert("Upload işlemi tamamdır");
     }
@@ -180,7 +165,7 @@ const fetchDeletedMyFiles = async () => {
 };
 const updateFileName = async () => {
   let id = selectedFile.value.id;
-
+  
   try {
     loading.value = true;
     let data = { name: selectedFile.value.name };

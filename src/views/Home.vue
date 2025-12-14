@@ -1,4 +1,6 @@
 <template>
+ <div v-if="loading">Kullanıcılar yükleniyor...</div>
+  <div v-if="error">Hata:{{error}}</div>
 <div class="card">
     <div class="card-header">
         <h2 class="card-title">Projeler</h2>
