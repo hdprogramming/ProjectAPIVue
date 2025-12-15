@@ -1,41 +1,52 @@
-Markdown
+# ProjectCLVue
 
-# ProjectCLVue 🚀
+> **⚠️ GELİŞTİRME SÜRECİ HAKKINDA NOT**
+>
+> Bu proje şu anda aktif geliştirme aşamasındadır (Work In Progress).
+> Bazı özellikler tamamlanmamış olabilir ve ciddi hatalar (bug) içerebilir.
+> Kullanırken veya incelerken lütfen bunu göz önünde bulundurunuz.
 
-Bu proje, **Vue 3** ve **Vite** kullanılarak geliştirilmiş modern bir frontend uygulamasıdır. İçerisinde dosya yönetimi, metin editörü (Quill) ve güvenli veri işleme yapıları barındırır.
+## 📋 Proje Hakkında
 
-> ⚠️ **DİKKAT: Geliştirme Süreci Devam Ediyor!** > Bu proje şu anda aktif geliştirme aşamasındadır (WIP). Bazı özellikler tamamlanmamış olabilir veya ciddi hatalar (bug) içerebilir. Kullanırken veya incelerken bunu göz önünde bulundurunuz.
+ProjectCLVue, **Vue 3** ve **Vite** altyapısı üzerine kurulmuş; özel dosya yönetimi, zengin metin editörü entegrasyonu ve güvenlik önlemleri (XSS koruması) içeren modern bir Frontend projesidir.
 
-## 🛠️ Önerilen IDE Kurulumu
+---
 
-Bu proje için en verimli geliştirme ortamı:
+## 💻 Önerilen IDE Kurulumu
 
-- [VS Code](https://code.visualstudio.com/) 
-- [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) eklentisi.
-  - *Not: Eğer yüklüyse `Vetur` eklentisini devre dışı bırakın.*
+Bu proje için en verimli geliştirme deneyimi için aşağıdakileri kullanmanız önerilir:
 
-## 🌐 Önerilen Tarayıcı Kurulumu
+- **[VS Code](https://code.visualstudio.com/)**
+- **[Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar)** eklentisi.
+  - *Önemli: Eğer yüklüyse `Vetur` eklentisini devre dışı bırakın.*
 
-Vue 3 reaktivite sistemini ve değişkenleri rahatça inceleyebilmek için:
+---
+
+## 🌐 Önerilen Tarayıcı Ayarları
+
+Vue 3'ün reaktivite sistemini ve değişkenleri konsolda düzgün görüntüleyebilmek için tarayıcı ayarlarınızı aşağıdaki gibi yapılandırın:
 
 ### Chromium Tabanlı Tarayıcılar (Chrome, Edge, Brave vb.)
-1. [Vue.js devtools](https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) eklentisini yükleyin.
-2. **Chrome DevTools** Ayarlarını açın (F12 -> Ayarlar).
-3. "Console" bölümü altındaki **"Enable custom formatters"** seçeneğini işaretleyin.
+1. **[Vue.js devtools](https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)** eklentisini yükleyin.
+2. F12 ile DevTools'u açın.
+3. Ayarlar (Settings) > Preferences > Console bölümüne gidin.
+4. **"Enable custom formatters"** seçeneğini işaretleyin.
 
 ### Firefox
-1. [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/) eklentisini yükleyin.
-2. **Firefox DevTools** Ayarlarını açın.
+1. **[Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)** eklentisini yükleyin.
+2. DevTools Ayarlarını açın.
 3. **"Enable custom formatters"** seçeneğini aktif hale getirin.
 
-## ⚙️ Proje Kurulumu
+---
 
-Projeyi klonladıktan sonra gerekli bağımlılıkları yüklemek için terminalde şu komutu çalıştırın:
+## ⚙️ Proje Kurulumu ve Çalıştırma
+
+Projeyi yerel makinenize indirdikten sonra gerekli paketleri yüklemek için terminalde şu komutu çalıştırın:
 
 ```sh
 npm install
 Geliştirme Modunda Çalıştırma (Hot-Reload)
-Projeyi yerel sunucuda başlatmak ve anlık değişiklikleri görmek için:
+Geliştirme yaparken anlık değişiklikleri görmek için:
 
 Bash
 
@@ -46,22 +57,16 @@ Projeyi yayına hazırlamak, sıkıştırmak ve optimize etmek için:
 Bash
 
 npm run build
-📂 Özellikler (Özet)
-Vue 3 Composition API: <script setup> yapısı ile temiz kod.
+🚀 Öne Çıkan Özellikler
+Vue 3 Composition API: <script setup> sözdizimi ile temiz ve modern kod yapısı.
 
-XSS Koruması: DOMPurify ile güvenli HTML render işlemleri.
+Güvenlik (Sanitization): DOMPurify entegrasyonu ile XSS saldırılarına karşı korumalı HTML render işlemleri.
 
-Dosya Yöneticisi: Resim yükleme, silme ve düzenleme modülü.
+Dosya Yönetimi (File Explorer): Resim yükleme, silme, düzenleme ve "Geri Dönüşüm Kutusu" özellikleri.
 
-Zengin Metin Editörü: Quill Editor entegrasyonu.
+Zengin Metin Editörü: Görsel destekli ve özelleştirilebilir Quill Editor entegrasyonu.
 
-Router Yapısı: ID tabanlı dinamik sayfa yönlendirmeleri.
+Backend Entegrasyonu: RESTful API yapısı ile tam uyumlu veri iletişimi.
 
 🔧 Konfigürasyon
-Vite ayarlarını özelleştirmek için Vite Configuration Reference sayfasına bakabilirsiniz.
-
-
-### Nasıl Kullanırsın?
-1.  Proje klasöründe `README.md` adında bir dosya oluştur.
-2.  Yukarıdaki kodu kopyalayıp içine yapıştır.
-3.  Kaydet.
+Vite ayarlarını özelleştirmek için Vite Configuration Reference sayfasını inceleyebilirsiniz.
