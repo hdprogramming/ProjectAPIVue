@@ -27,7 +27,7 @@ const login = async () => {
     authStore.setAuth(token, userID, userRole);
     
     success.value = 'Başarıyla giriş yapıldı!';
-    router.push('/profile'); // Yönlendirme, nav bar artık reaktif olarak güncellenmeli.
+    router.push('/Projects'); // Yönlendirme, nav bar artık reaktif olarak güncellenmeli.
     
   } catch (err) {
     alert("Girdiğiniz şifre hatalı yada böyle bir kullanıcı yok");

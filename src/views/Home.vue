@@ -40,7 +40,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="project in filteredProjects" :key="project.id" >
+                <tr v-for="project in filteredProjects" :key="project.id" @click="router.push({ name: 'Project', params: { id: project.id } });" >
                     <td><i :class="`fa fa-2x fa-${project.icon}`" /></td>
                     <td><strong>{{project.title}}</strong></td>
                     <td>{{project.description}}</td>
@@ -101,7 +101,9 @@ import CategoryBox from '../components/categoriesbox.vue'
 import custominput from '@/components/custominput.vue'
 import StatusBox from '@/components/statusbox.vue'
 import { useAuthStore } from "@/stores/auth"; 
+import {  useRouter } from "vue-router";
 const authStore=useAuthStore();
+const router=useRouter();
 const isModalOpen = ref(false);
 const PageNo=ref(1);
 const maxpage=2;

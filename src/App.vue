@@ -6,19 +6,19 @@
         <span class="headtext">ProjectAPI</span>
       </a>
       <nav>
-        <RouterLink to="/">Anasayfa</RouterLink> |
-         <RouterLink to="/Projects">Projelerim</RouterLink> |
-        <template v-if="!isAuthenticated">
-          <RouterLink to="/login">Giriş Yap</RouterLink> |
+        <RouterLink to="/">Anasayfa</RouterLink>          
+        <template v-if="!isAuthenticated">        
+          <RouterLink to="/login">Giriş Yap</RouterLink> 
           <RouterLink to="/register">Kayıt Ol</RouterLink>
         </template>
         <template v-else>
+        <RouterLink to="/Projects">Projelerim</RouterLink> 
           <RouterLink to="/profile">Profilim</RouterLink>
            <RouterLink to="/myfiles">Yüklenen Dosyalarım</RouterLink>
           <template v-if="isAdmin">
-            | <RouterLink to="/admin">Admin Panel</RouterLink>
+             <RouterLink to="/admin">Admin Panel</RouterLink>
           </template>
-          | <button class="btn btn-danger" @click="logout">Çıkış Yap</button>
+           <button class="btn btn-danger" @click="logout">Çıkış Yap</button>
         </template>
       </nav>
     </div>
@@ -88,7 +88,12 @@ body {
   color: var(--text-color);
   padding-bottom: 50px;
 }
-
+/* Scoped OLMADAN, global stil olarak */
+.ql-editor img {
+  display: inline-block; /* Block olursa bazen sürüklenmez */
+  vertical-align: middle;
+  cursor: grabbing; /* Tutulabilir hissi ver */
+}
 .topbar {
   display: flex;
   align-items: center;
@@ -137,6 +142,7 @@ body {
   color: var(--text-light);
   font-family: "Poppins", sans-serif;
   font-weight: 500;
+  text-decoration:none;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -347,7 +353,9 @@ input[type="password"]:focus {
   background-color: #009879;
   color: #ffffff;
   text-align: left;
+  
 }
+
 .redhead th {
   background-color: rgb(150, 0, 0) !important;
 }
@@ -361,6 +369,7 @@ input[type="password"]:focus {
 }
 .fl-table tbody tr {
   border-bottom: 1px solid #eee;
+  cursor:pointer;
 }
 .fl-table tbody tr:nth-of-type(even) {
   background-color: #f9f9f9;

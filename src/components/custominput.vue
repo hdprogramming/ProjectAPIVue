@@ -85,14 +85,30 @@
        <label :for="uniqueId" class="static-label">{{ label }}</label>
     </div>
     <div class="formvaluearea" v-if="xtype === 'Editor'">
-       <Modal v-model="isEditorModalOpen">
+    <Modal v-model="isEditorModalOpen">
         <Editor v-model="editorTempContent"/>
-       <button class="btn btn-primary" @click="closeEditor()">Güncelle</button>
-       </Modal>
-       
-       <button class="btn btn-primary" style="margin-top:10px" @click="openEditor()">Düzenle</button>
-       <label :for="uniqueId" class="static-label">{{ label }}</label>
+        
+        <div style="margin-top:10px; text-align:right">
+             <button class="btn btn-secondary" style="margin-right:10px" @click="closeEditor()">İptal</button>
+             <button class="btn btn-primary" @click="saveEditorContent()">Kaydet</button>
+        </div>
+    </Modal>
+    
+    <div 
+       class="fake-input-display" 
+       @click="openEditor()"
+    >
+       <span v-if="modelValue && modelValue.length > 0" class="text-truncated">
+         HTML İçerik (Düzenlemek için tıkla)
+       </span>
+       <span v-else class="text-placeholder">
+         İçerik girmek için tıklayın...
+       </span>
+       <i class="fa fa-pen edit-icon"></i>
     </div>
+    
+    <label :for="uniqueId" class="static-label">{{ label }}</label>
+</div>
     <div class="formvaluearea" v-if="xtype === 'IconPicker'">
        <div class="icon-picker-container">
           <div 
@@ -194,7 +210,9 @@ watch(() => props.modelValue, (newVal) => {
 const triggerFileClick = () => {
     fileInputRef.value.click();
 }
-
+defineExpose({
+    triggerFileClick
+});
 // Dosya seçilince çalışır
 const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -436,5 +454,41 @@ const handleDateUpdate = (val) => {
 .file-clear-btn:hover {
     background-color: #d63031;
     transform: translateY(-50%) scale(1.1);
+}
+/* Editor Tetikleyici Görünümü */
+.fake-input-display {
+    width: 100%;
+    box-sizing: border-box;
+    background: linear-gradient(175deg, #ffffff 0%, #f9f9f9 100%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 16px 15px 12px 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 52px;
+    transition: all 0.3s ease;
+}
+
+.fake-input-display:hover {
+    border-color: #00b894;
+    background: #fff;
+}
+
+.fake-input-display .text-placeholder {
+    color: #999;
+    font-size: 10pt;
+    font-weight: 500;
+}
+
+.fake-input-display .text-truncated {
+    color: #555;
+    font-size: 10pt;
+    font-weight: 500;
+}
+
+.edit-icon {
+    color: #00b894;
 }
 </style>

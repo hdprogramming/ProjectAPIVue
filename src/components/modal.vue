@@ -25,7 +25,7 @@ function close() {
     <Transition name="fade">
       <div v-if="modelValue" class="modal-overlay" @click.self="close">
         
-        <div class="modal-content">
+        <div class="modal-content" >
           <div class="modal-header">
             <h5>{{ title }}</h5>
             <button class="close-btn" @click="close">×</button>
@@ -64,7 +64,7 @@ function close() {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  width: 500px;
+  width: 50%;
   max-width: 90%;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }

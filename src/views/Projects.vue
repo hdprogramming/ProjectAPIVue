@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading">Kullanıcılar yükleniyor...</div>
-  <div v-if="error">Hata:{{error}}</div>
+  <div v-if="error">Hata:{{ error }}</div>
   <div class="card">
     <div class="card-header">
       <h2 class="card-title">Proje Yönetimi</h2>
@@ -26,7 +26,8 @@
     </div>
     <modal v-model="isModalOpen">
       <div class="form-group">
-        <h2>Projeyi Düzenle</h2>
+        <h2 v-if="ModalMode === 'Edit'">Projeyi Düzenle</h2>
+        <h2 v-else-if="ModalMode === 'New'">Yeni Proje</h2>
         <div v-if="ModalPageNo == 1">
           <custominput
             label="Proje Simgesi"
@@ -59,15 +60,18 @@
             label="Tarih"
             v-model="modalVals.date"
           />
-          <custominput 
-           xtype="Editor"
-           label="İçerik"
-           v-model="modalVals.content"
-           />
+          <custominput xtype="Editor" label="İçerik" v-model="modalVals.content" />
         </div>
         <div class="buttonarea">
-          <button class="btn btn-primary" @click="updateProject(modalVals.id)">
+          <button
+            v-if="ModalMode === 'Edit'"
+            class="btn btn-primary"
+            @click="updateProject(modalVals.id)"
+          >
             Güncelle
+          </button>
+          <button v-else-if="ModalMode === 'New'" class="btn btn-primary" @click="newProject()">
+            Yeni Proje
           </button>
           <button
             v-if="ModalPageNo < maxpage"
@@ -84,6 +88,9 @@
     </modal>
 
     <div class="table-container">
+      <button class="btn btn-primary" @click="openEditModal(null, 'New')">
+        + Yeni Proje
+      </button>
       <table class="fl-table">
         <thead>
           <tr>
@@ -99,7 +106,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="project in filteredProjects" :key="project.id">
+          <tr v-for="project in filteredProjects" :key="project.id" style="cursor: grab">
             <td><i :class="`fa fa-2x fa-${project.icon}`" /></td>
             <td>
               <strong>{{ project.title }}</strong>
@@ -188,6 +195,12 @@
                 >
                   <i class="fa-solid fa-recycle"></i>
                 </button>
+                <button
+                  class="btn btn-danger btn-sm"
+                  @click="hardDeleteProject(project.id)"
+                >
+                  <i class="fa-solid fa-burn"></i>
+                </button>
               </div>
             </td>
           </tr>
@@ -203,7 +216,6 @@
   </div>
 </template>
 <style scoped>
-
 .buttonarea {
   display: flex;
   justify-content: center;
@@ -234,13 +246,16 @@
 </style>
 <script setup>
 import { ref, onMounted, computed } from "vue";
+import DOMPurify from 'dompurify';
 import api from "@/services/api.js";
 import modal from "@/components/modal.vue";
 import CategoryBox from "../components/categoriesbox.vue";
 import custominput from "@/components/custominput.vue";
 import StatusBox from "@/components/statusbox.vue";
 import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "vue-router";
 const authStore = useAuthStore();
+const router = useRouter();
 const isModalOpen = ref(false);
 const maxpage = 2;
 const modalVals = ref({});
@@ -250,6 +265,8 @@ const success = ref(null);
 const projects = ref([]);
 const deletedprojects = ref([]);
 const ModalPageNo = ref(1);
+const ModalMode = ref("Edit");
+
 const ModalPageNext = () => {
   if (ModalPageNo.value + 1 <= maxpage) ModalPageNo.value += 1;
 };
@@ -302,8 +319,9 @@ const filteredProjects = computed(() => {
 
   return result;
 });
-const openEditModal = (project) => {
+const openEditModal = (project, mode = "Edit") => {
   ModalPageNo.value = 1;
+  ModalMode.value = mode;
   modalVals.value = { ...project };
   isModalOpen.value = true;
 };
@@ -331,6 +349,45 @@ const fetchDeletedProjects = async (page = 1, length = 10) => {
     loading.value = false;
   }
 };
+const newProject = async () => {
+  try {
+    loading.value = true;
+    let newProjectData = {};
+   
+    const fieldsToCheck = [
+      "title",
+      "icon",
+      "description",
+      "date",
+      "content",
+      "statusID",
+      "categoryIds",
+      "isAlive",
+    ];
+
+    
+    fieldsToCheck.forEach((field) => {
+      const newValue = modalVals.value[field];
+      if (field == "content") {
+        newProjectData[field] = DOMPurify.sanitize(newValue || "", {
+          ADD_TAGS: ["iframe"], // Videolara izin ver
+          ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "target"], // Gerekli özelliklere izin ver
+        });
+      } else {
+        newProjectData[field] = newValue;
+      }
+    });
+    console.log(newProjectData);
+    
+    let response = await api.post(`/Projects/`, newProjectData);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    fetchProjects();
+    loading.value = false;
+    isModalOpen.value = false;
+  }
+};
 const updateProject = async (_id) => {
   try {
     loading.value = true;
@@ -345,6 +402,7 @@ const updateProject = async (_id) => {
       "icon",
       "description",
       "date",
+      "content",
       "statusID",
       "categoryIds",
       "isAlive",
@@ -358,7 +416,14 @@ const updateProject = async (_id) => {
 
       // Değerler eşit değilse updateData'ya ekle
       if (oldValue != newValue) {
-        updateData[field] = newValue;
+        if (field == "content") {
+          updateData[field] = dompurify.sanitize(newValue || "", {
+            ADD_TAGS: ["iframe"], // Videolara izin ver
+            ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "target"], // Gerekli özelliklere izin ver
+          });
+        } else {
+          updateData[field] = newValue;
+        }
       }
     });
     console.log(updateData);
@@ -387,6 +452,17 @@ const deleteProject = async (_id) => {
 const recoverProject = async (_id) => {
   try {
     let response = await api.post(`/Projects/Recover/${_id}`);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    refresh();
+    loading.value = false;
+  }
+};
+const hardDeleteProject = async (_id) => {
+  if (confirm("Silinen proje geri getirilemez eminmisiniz?"))
+  try {
+    let response = await api.delete(`/Projects/Permanent/${_id}`);
   } catch (error) {
     console.error(error);
   } finally {

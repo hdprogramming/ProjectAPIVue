@@ -3,7 +3,23 @@
     <div v-if="isUploading" class="upload-loader">
       Resim yükleniyor...
     </div>
-    
+
+    <modal v-model="isImageModalOpen">
+      <div class="AddImageContainer">
+        <h3>Görsel Seç veya Yükle</h3>
+        
+        <FileExplorer
+          :files="myfiles"
+          @click-image="onSelectImage" 
+          @upload="onUploadImage" 
+        />
+        
+        <div style="margin-top: 10px; text-align: right;">
+          <button class="btn btn-secondary" @click="isImageModalOpen = false">Kapat</button>
+        </div>
+      </div>
+    </modal>
+
     <QuillEditor
       ref="quillEditorRef"
       theme="snow"
@@ -22,19 +38,25 @@ import { ref, watch } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import BlotFormatter from 'quill-blot-formatter'; 
+import modal from '@/components/modal.vue';
+import FileExplorer from '@/components/FileExplorer.vue';
 import api from "@/services/api.js";
-import {API_URL} from "@/services/api.js";
+
 const props = defineProps({
-  modelValue: {
-    type: String,
-    default: ''
-  }
+  modelValue: { type: String, default: '' }
 });
 
 const emit = defineEmits(['update:modelValue']);
 const localContent = ref('');
 const quillEditorRef = ref(null);
 const isUploading = ref(false);
+const isImageModalOpen = ref(false);
+
+const myfiles = ref([]);
+const loading = ref(true);
+
+// İMLEÇ KONUMUNU SAKLAYACAK DEĞİŞKEN (ÇOK ÖNEMLİ)
+const savedRange = ref(null);
 
 // --- WATCHERS ---
 watch(() => props.modelValue, (newVal) => {
@@ -47,6 +69,19 @@ watch(localContent, (newVal) => {
   emit('update:modelValue', newVal);
 });
 
+// --- API FETCH ---
+const fetchMyFiles = async () => {
+  try {
+    loading.value = true;
+    let response = await api.get(`/Uploads/MyFiles`);
+    myfiles.value = response.data;
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
 // --- API UPLOAD ---
 const uploadImageToServer = async (file) => {
   const body = new FormData();
@@ -57,51 +92,70 @@ const uploadImageToServer = async (file) => {
     const res = await api.post('/Uploads/Image', body, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
-      
-      let url=res.data.url;
-     
-    return url; 
-  
+    // Backend tam URL dönüyorsa direkt al, yoksa path birleştir
+    return res.data.url; 
   } catch (error) {
     console.error('Resim yükleme hatası:', error);
+    alert("Resim yüklenemedi!");
     return null;
   }
 };
 
-// --- HANDLER ---
-const imageHandler = () => {
-  const input = document.createElement('input');
-  input.setAttribute('type', 'file');
-  input.setAttribute('accept', 'image/*');
-  input.click();
+// --- CORE: RESMİ EDİTÖRE GÖMME İŞLEMİ ---
+const insertToEditor = (url) => {
+    const quill = quillEditorRef.value.getQuill();
+    
+    // Eğer kaydedilmiş bir konum varsa oraya, yoksa en başa (0) ekle
+    const rangeIndex = savedRange.value ? savedRange.value.index : 0;
+    
+    // 1. Resmi ekle
+    quill.insertEmbed(rangeIndex, 'image', url);
+    
+    // 2. İmleci resmin sağına at (bir sonraki karakter)
+    quill.setSelection(rangeIndex + 1);
+    
+    // 3. Modalı kapat
+    isImageModalOpen.value = false;
+}
 
-  input.onchange = async () => {
-    const file = input.files[0];
-    if (!file) return;
+// --- EVENTS: FileExplorer'dan Gelenler ---
 
-    isUploading.value = true;
-    try {
-      // Vue-Quill instance'ı üzerinden Quill nesnesini alıyoruz
-      const quill = quillEditorRef.value.getQuill();
-      const range = quill.getSelection(true) || { index: 0 };
-
-      const url = await uploadImageToServer(file);
-
-      if (url) {
-        quill.insertEmbed(range.index, 'image', url);
-        quill.setSelection(range.index + 1);
-      }
-    } catch (e) {
-      console.error("Yükleme işlemi sırasında hata:", e);
-    } finally {
-      isUploading.value = false;
-    }
-  };
+// A) Var olan resme tıklandığında
+const onSelectImage = (file) => {
+    // FileExplorer'dan gelen file objesinde .url olduğunu varsayıyoruz
+    insertToEditor(file.url);
 };
 
-// --- CONFIGURATION ---
+// B) Yeni resim yüklendiğinde
+const onUploadImage = async (file) => {
+    isUploading.value = true;
+    // Modalı kapatmıyoruz, yükleme bitince insert yapıp kapatacağız
+    
+    const url = await uploadImageToServer(file);
+    
+    if (url) {
+        insertToEditor(url);
+        // İstersen listeyi de güncelle
+        fetchMyFiles(); 
+    }
+    isUploading.value = false;
+};
 
-// 1. Toolbar butonlarını ayrı bir değişkene aldık (modules içine koymuyoruz!)
+// --- HANDLER: Editör Butonuna Basınca ---
+const imageHandler = () => {
+  const quill = quillEditorRef.value.getQuill();
+  
+  // 1. ŞU ANKİ KONUMU KAYDET! (Focus kaybolmadan önce)
+  savedRange.value = quill.getSelection(true) || { index: 0 };
+  
+  // 2. Dosyaları çek
+  fetchMyFiles();
+  
+  // 3. Modalı aç
+  isImageModalOpen.value = true;
+};
+
+// --- CONFIG ---
 const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],
   ['blockquote', 'code-block'],
@@ -116,27 +170,46 @@ const toolbarOptions = [
   ['clean']
 ];
 
-// 2. Modules dizisine SADECE harici eklentileri (Plugin) koyuyoruz.
 const modules = [
   {
-    name: 'blotFormatter',  
+    name: 'blotFormatter',
     module: BlotFormatter, 
-    options: {}
+    options: {
+      overlay: {
+        style: {
+          border: '2px solid red', // Seçili olduğunu belli etmek için
+        }
+      },
+      align: {
+        icons: {
+          left: "<i class='fa fa-align-left'></i>", // İkonları özelleştirebilirsin
+          center: "<i class='fa fa-align-center'></i>",
+          right: "<i class='fa fa-align-right'></i>"
+        }
+      }
+    }
   }
 ];
 
-// 3. EN ÖNEMLİ KISIM: Editör hazır olduğunda Handler'ı ekliyoruz.
 const onEditorReady = (quill) => {
-  // Quill instance geldiğinde toolbar modülünü alıp, image handler'ı override ediyoruz.
   const toolbar = quill.getModule('toolbar');
   toolbar.addHandler('image', imageHandler);
 };
-
 </script>
 
 <style scoped>
 .editor-wrapper {
   position: relative;
+}
+.AddImageContainer{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding: 5px;
+}
+.AddImageContainer h3{
+  color:green;
+  margin-bottom:10px;
 }
 .upload-loader {
   position: absolute;

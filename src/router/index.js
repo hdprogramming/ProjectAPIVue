@@ -5,6 +5,7 @@ import Register from '@/views/Register.vue';
 import Profile from '@/views/Profile.vue';
 import AdminPanel from '@/views/AdminPanel.vue';
 import Projects from '@/views/Projects.vue'
+import Project from '@/views/ProjectView.vue'
 import MyFiles from '@/views/MyFiles.vue'
 // Eğer ana sayfanız varsa
 import Home from '@/views/Home.vue'; 
@@ -21,6 +22,12 @@ const router = createRouter({
       path: '/Projects',
       name: 'Projects',
       component: Projects // Ana sayfa component'iniz
+    },
+     {
+      path: '/Project:id',
+      name: 'Project',
+      component: Project,
+      meta: { requiresAuth: false } // Giriş gerektirmez
     },
     {
       path: '/login',
