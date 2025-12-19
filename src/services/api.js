@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { rtp,GetData, StoreData, RemoveData } from '@/stores/locker';
 // API'nizin temel URL'sini buraya yazın
 export const API_URL = 'http://localhost:5098/api'; 
 
@@ -15,7 +15,7 @@ const api = axios.create({
 // Her istek gönderilmeden önce Local Storage'daki JWT Token'ı ekler
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
+    const token = GetData();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -42,10 +42,11 @@ api.interceptors.response.use(
         const response = await axios.post(`${API_URL}/auth/refresh`, {}, { withCredentials: true });
         
         // Yeni token'ı kaydet ve orijinal isteği tekrar dene
-        const newToken = response.data.token;
-        localStorage.setItem('authToken', newToken);
+        const newToken = response.data.token;               
+        localStorage.setItem('authToken', rtp(newToken));
+
         api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-        
+        StoreData(newToken); 
         // Yeni token ile orijinal isteği tekrar gönder
         return api(originalRequest);
         
@@ -53,6 +54,7 @@ api.interceptors.response.use(
         // Refresh token da başarısız olursa (süresi dolmuşsa vb.) kullanıcıyı çıkışa yönlendir
         console.error("Refresh Token başarısız. Kullanıcı çıkış yapmalı.");
         localStorage.removeItem('authToken');
+        RemoveData();
         // İhtiyaç duyulursa burada bir router.push('/login') yapılabilir
         return Promise.reject(refreshError);
       }

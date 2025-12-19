@@ -96,7 +96,7 @@ router.beforeEach((to, from, next) => {
     next('/'); 
   } else if (isAuthenticated() && (to.name === 'Login' || to.name === 'Register')) {
     // Giriş yapmış bir kullanıcı, tekrar Login/Register sayfasına gidememeli
-    next('/profile'); 
+    next('/projects'); 
   } 
   else {
     // Her şey yolundaysa devam et

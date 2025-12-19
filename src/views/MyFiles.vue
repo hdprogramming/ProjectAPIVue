@@ -1,5 +1,5 @@
 <template>
-   <div v-if="loading">Kullanıcılar yükleniyor...</div>
+   <div v-if="loading">Dosyalar yükleniyor...</div>
   <div v-if="error">Hata:{{error}}</div>
   <div class="page-wrapper">
     <div class="card">
