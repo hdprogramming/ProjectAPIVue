@@ -417,10 +417,7 @@ const updateProject = async (_id) => {
       // Değerler eşit değilse updateData'ya ekle
       if (oldValue != newValue) {
         if (field == "content") {
-          updateData[field] = dompurify.sanitize(newValue || "", {
-            ADD_TAGS: ["iframe"], // Videolara izin ver
-            ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "target"], // Gerekli özelliklere izin ver
-          });
+          updateData[field] = newValue;
         } else {
           updateData[field] = newValue;
         }

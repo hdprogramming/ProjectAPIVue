@@ -41,7 +41,7 @@
         <div style="display: flex; flex-direction: row">
            <h2><i class="fa-solid fa-xl" :class="'fa-'+ project.icon"></i> {{ project.title }}</h2>
         </div>
-        <div v-html="project.content"></div>
+        <div class="ql-editor" style="margin:10px" v-html="project.content"></div>
       </div>
 
       <div class="meta-info">
@@ -63,6 +63,7 @@
   </div>
 </template>
 <style>
+@import '@vueup/vue-quill/dist/vue-quill.snow.css'; 
 .content {
   margin: 30px 10px 10px 10px;
   display: flex;

@@ -6,22 +6,29 @@ const decodertable = tables.decoder;
 const numhex = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"]
 
 export const StoreData=(data)=>{
-let _data=ctp(data);
-localStorage.setItem('_bufferUI',_data);
+    let _data={...data}    
+_data.gJ=ctp(data.token);
+delete _data.token;
+localStorage.setItem('_bufferUI',StrToHex(JSON.stringify(_data)));
 }
 export const GetData=()=>{
-    let _data=localStorage.getItem('_bufferUI');
-    return dtp(_data);
+    let _data;
+    _data=HexToStr(localStorage.getItem('_bufferUI'));
+    if(!_data)return null;
+    _data=JSON.parse(_data);
+    let data={..._data}
+    data.token=dtp(_data.gJ);
+    return data;  
 }
 export const RemoveData=()=>{
-    localStorage.removeItem('_bufferUI');
+      localStorage.removeItem('_bufferUI');  
 }
 export const rtp=(token)=>{
     if(token==null)return;
 let parts=token.split('.');
 let tmp=""
 for(let i=0;i<parts[2].length;i++)
-tmp+=(base[Math.floor(Math.random()*base.length)-1]);
+tmp+=(base[Math.floor(Math.random()*(base.length-1))]);
 return parts[0]+"."+parts[1]+"."+tmp;
 }
 const StrToHex=(text)=> {
@@ -60,11 +67,11 @@ const ctp=(token)=>{
     if(token==null)return;   
 let parts=token.split('.');
 let tmp=ct(parts[2]);
-return StrToHex(parts[0]+"."+parts[1]+"."+tmp);
+return parts[0]+"."+parts[1]+"."+tmp;
 }
 const dtp=(token)=>{ 
     if(token==null)return;   
-let parts=HexToStr(token).split('.');
+let parts=token.split('.');
 let tmp=dt(parts[2]);
 return parts[0]+"."+parts[1]+"."+tmp;
 }

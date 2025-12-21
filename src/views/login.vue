@@ -20,17 +20,15 @@ const login = async () => {
       password: password.value
     });
 
-    const { token, userID } = response.data;
-    const userRole = (email.value === 'admin@projectapi.com') ? 'Admin' : 'User';
-
+    const UserData = response.data;    
     // 🏆 KRİTİK: State'i ve Local Storage'ı Pinia action ile tek seferde güncelle!
-    authStore.setAuth(token, userID, userRole);
+    authStore.setAuth(UserData);
     
     success.value = 'Başarıyla giriş yapıldı!';
     router.push('/Projects'); // Yönlendirme, nav bar artık reaktif olarak güncellenmeli.
     
   } catch (err) {
-    alert("Girdiğiniz şifre hatalı yada böyle bir kullanıcı yok");
+    alert("Girdiğiniz şifre hatalı yada böyle bir kullanıcı yok"+err);
   }
 };
 

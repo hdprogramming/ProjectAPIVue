@@ -6,19 +6,19 @@
         <span class="headtext">ProjectAPI</span>
       </a>
       <nav>
-        <RouterLink to="/">Anasayfa</RouterLink>          
-        <template v-if="!isAuthenticated">        
-          <RouterLink to="/login">Giriş Yap</RouterLink> 
+        <RouterLink to="/">Anasayfa</RouterLink>
+        <template v-if="!isAuthenticated">
+          <RouterLink to="/login">Giriş Yap</RouterLink>
           <RouterLink to="/register">Kayıt Ol</RouterLink>
         </template>
         <template v-else>
-        <RouterLink to="/Projects">Projelerim</RouterLink> 
+          <RouterLink to="/Projects">Projelerim</RouterLink>
+          <RouterLink to="/myfiles">Yüklenen Dosyalarım</RouterLink>
           <RouterLink to="/profile">Profilim</RouterLink>
-           <RouterLink to="/myfiles">Yüklenen Dosyalarım</RouterLink>
           <template v-if="isAdmin">
-             <RouterLink to="/admin">Admin Panel</RouterLink>
+            <RouterLink to="/admin">Admin Panel</RouterLink>
           </template>
-           <button class="btn btn-danger" @click="logout">Çıkış Yap</button>
+          <button class="btn btn-danger" @click="logout">Çıkış Yap</button>
         </template>
       </nav>
     </div>
@@ -30,16 +30,16 @@
 </template>
 
 <script setup>
-import { ref,computed,onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth"; // Store'u import et
-import { useCategoryStore } from '@/stores/categoryStore'
-import { useStatusStore } from '@/stores/statusStore'
-const categoryStore = useCategoryStore()
-const statusStore=useStatusStore();
-onMounted(()=>{
-categoryStore.fetchCategories();
-statusStore.fetchStatus();
+import { useCategoryStore } from "@/stores/categoryStore";
+import { useStatusStore } from "@/stores/statusStore";
+const categoryStore = useCategoryStore();
+const statusStore = useStatusStore();
+onMounted(() => {
+  categoryStore.fetchCategories();
+  statusStore.fetchStatus();
 });
 const router = useRouter();
 const authStore = useAuthStore(); // Store'u kullan
@@ -55,7 +55,6 @@ const logout = () => {
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;600&family=Poppins:wght@300;400;500;600&display=swap");
 
 :root {
   --bg-color: #f4f7f6;
@@ -65,10 +64,10 @@ const logout = () => {
   --primary-hover: #1b5e20;
   --danger-color: #d32f2f;
   --danger-hover: #b71c1c;
-   --warning-color: #d3732fff;
+  --warning-color: #d3732fff;
   --warning-hover: #ba6528ff;
-  --recovery-color:rgb(0,200,200);
-  --recovery-hover:rgb(0,150,150);
+  --recovery-color: rgb(0, 200, 200);
+  --recovery-hover: rgb(0, 150, 150);
   --text-color: #333;
   --text-light: #666;
   --border-color: #e0e0e0;
@@ -142,7 +141,7 @@ body {
   color: var(--text-light);
   font-family: "Poppins", sans-serif;
   font-weight: 500;
-  text-decoration:none;
+  text-decoration: none;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -177,9 +176,9 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-.card-navigate{
-  display:flex;
-  justify-content:space-between;
+.card-navigate {
+  display: flex;
+  justify-content: space-between;
 }
 .card-title {
   font-family: "Oswald", sans-serif;
@@ -206,37 +205,58 @@ body {
   border: 4px solid #fff;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
+.avatar-wrapper .upload-button {
+  position: absolute;
+  bottom: 0; /* Alt kısma yapıştır */
+  right: 0;  /* Sağ kısma yapıştır */
+  
+  /* Tam yuvarlak yapmak için */
+  border-radius: 50%;
+  width: 35px;  /* Genişlik ve yükseklik eşit olmalı */
+  height: 35px;
+  
+  /* İkonu tam ortalamak için */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* Bootstrap padding'ini sıfırla */
+  
+  /* Estetik dokunuş: Resimden ayrılması için beyaz kenarlık */
+  border: 3px solid #fff; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 10; /* Resmin üzerinde kaldığından emin olalım */
+}
 .v-stack {
   display: flex;
-  align-items: center;  
+  align-items: center;
   flex-direction: column;
 }
 /* Modern Select Kutusu */
 .form-select {
-    padding: 10px 30px 10px 15px; /* Ok işareti için sağda boşluk */
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.9rem;
-    color: var(--text-color);
-    background-color: #fafafa;
-    cursor: pointer;
-    outline: none;
-    /* Varsayılan tarayıcı okunu değiştirmek/kaldırmak istersen: appearance: none; */
+  padding: 10px 30px 10px 15px; /* Ok işareti için sağda boşluk */
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  background-color: #fafafa;
+  cursor: pointer;
+  outline: none;
+  /* Varsayılan tarayıcı okunu değiştirmek/kaldırmak istersen: appearance: none; */
 }
 
 .form-select:focus {
-    border-color: var(--primary-green);
-    background-color: #fff;
+  border-color: var(--primary-green);
+  background-color: #fff;
 }
-.form-group { 
-  margin-bottom: 1.2rem;  
+.form-group {
+  margin-bottom: 1.2rem;
 }
-.form-group h2{
-  margin-bottom:1.2rem;
-  text-align:center;
+.form-group h2 {
+  margin-bottom: 1.2rem;
+  text-align: center;
 }
-.form-group label{
+.form-group label {
   display: block;
   margin-bottom: 0.4rem;
   font-size: 0.85rem;
@@ -326,7 +346,7 @@ input[type="password"]:focus {
 }
 /* Küçük Buton (Tablo için) */
 .btn-sm {
-  margin-left:2px;
+  margin-left: 2px;
   padding: 6px 12px;
   font-size: 0.8rem;
   border-radius: 4px;
@@ -353,7 +373,6 @@ input[type="password"]:focus {
   background-color: #009879;
   color: #ffffff;
   text-align: left;
-  
 }
 
 .redhead th {
@@ -369,7 +388,7 @@ input[type="password"]:focus {
 }
 .fl-table tbody tr {
   border-bottom: 1px solid #eee;
-  cursor:pointer;
+  cursor: pointer;
 }
 .fl-table tbody tr:nth-of-type(even) {
   background-color: #f9f9f9;

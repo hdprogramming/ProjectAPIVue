@@ -15,9 +15,10 @@ const api = axios.create({
 // Her istek gönderilmeden önce Local Storage'daki JWT Token'ı ekler
 api.interceptors.request.use(
   (config) => {
-    const token = GetData();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    let userdata = GetData();
+    
+    if (userdata) {
+        config.headers.Authorization = `Bearer ${userdata.token}`;
     }
     return config;
   },
@@ -46,7 +47,9 @@ api.interceptors.response.use(
         localStorage.setItem('authToken', rtp(newToken));
 
         api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-        StoreData(newToken); 
+        let data = GetData();
+        data.token=newToken;
+        StoreData(data); 
         // Yeni token ile orijinal isteği tekrar gönder
         return api(originalRequest);
         
