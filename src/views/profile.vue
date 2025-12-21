@@ -21,11 +21,12 @@
         <div class="avatar-section">
           <div class="avatar-wrapper">
             <img
-              v-bind:src="
+              :src="
                 profile.profileImageUrl ? profile.profileImageUrl : defaultProfileImage
               "
               alt=""
             />
+           
             <button
               class="btn btn-primary btn-sm upload-button"
               @click="openUploadModal()"

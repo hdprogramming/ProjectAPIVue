@@ -7,17 +7,19 @@
       </a>
       <nav>
         <RouterLink to="/">Anasayfa</RouterLink>
+           
         <template v-if="!isAuthenticated">
           <RouterLink to="/login">Giriş Yap</RouterLink>
           <RouterLink to="/register">Kayıt Ol</RouterLink>
         </template>
         <template v-else>
-          <RouterLink to="/Projects">Projelerim</RouterLink>
-          <RouterLink to="/myfiles">Yüklenen Dosyalarım</RouterLink>
-          <RouterLink to="/profile">Profilim</RouterLink>
+           <RouterLink to="/Projects">{{!isAdmin?"Projelerim":"Projeler"}}</RouterLink> 
           <template v-if="isAdmin">
-            <RouterLink to="/admin">Admin Panel</RouterLink>
+            <RouterLink to="/admin">Admin Panel</RouterLink>            
           </template>
+            <RouterLink v-else to="/myfiles">Yüklenen Dosyalarım</RouterLink>
+            <RouterLink to="/profile"><img class="ProfileImage" :src="ProfileDetails.profileImgUrl"></img>{{ProfileDetails.UserName}}<i class="fa fa-angle-down"></i></RouterLink>
+       
           <button class="btn btn-danger" @click="logout">Çıkış Yap</button>
         </template>
       </nav>
@@ -37,17 +39,18 @@ import { useCategoryStore } from "@/stores/categoryStore";
 import { useStatusStore } from "@/stores/statusStore";
 const categoryStore = useCategoryStore();
 const statusStore = useStatusStore();
-onMounted(() => {
-  categoryStore.fetchCategories();
-  statusStore.fetchStatus();
-});
+
 const router = useRouter();
 const authStore = useAuthStore(); // Store'u kullan
 
 // 🏆 KRİTİK: Computed property'ler artık Pinia'daki reaktif state'i kullanıyor!
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const isAdmin = computed(() => authStore.isAdmin);
-
+const ProfileDetails = computed(() => authStore.ProfileDetails);
+onMounted(() => {  
+  categoryStore.fetchCategories();
+  statusStore.fetchStatus();
+});
 const logout = () => {
   authStore.clearAuth(); // Pinia action'ı çağır
   router.push("/login");
@@ -167,7 +170,11 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.02);
   height: fit-content; /* İçerik kadar yükseklik */
 }
-
+.ProfileImage{
+  width:1.5rem;
+  height:1.5rem;
+  border-radius:50%;
+}
 .card-header {
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;

@@ -145,7 +145,7 @@ const updateUser = async (userid) => {
   if (newval.userName != founded.userName) user.userName = newval.userName;
   if (newval.bio != founded.bio) user.bio = newval.bio;
   if (newval.password) {
-    if (newval.password.length > 8) user.password = newval.password;
+    if (newval.password.length > 7) user.password = newval.password;
     else {
       alert("Şifre en az 8 karakter olmalı");
       return;

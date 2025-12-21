@@ -3,7 +3,7 @@ const base="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 import tables from '@/utils/tables';
 const encodertable = tables.encoder;
 const decodertable = tables.decoder;
-const numhex = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"]
+const numhex = ["F","E","D","C","B","A","0","1","2","3","4","5","6","7","8","9"]
 
 export const StoreData=(data)=>{
     let _data={...data}    

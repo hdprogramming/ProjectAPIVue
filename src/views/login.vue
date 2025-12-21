@@ -28,7 +28,8 @@ const login = async () => {
     router.push('/Projects'); // Yönlendirme, nav bar artık reaktif olarak güncellenmeli.
     
   } catch (err) {
-    alert("Girdiğiniz şifre hatalı yada böyle bir kullanıcı yok"+err);
+    console.log(err);
+    alert("Girdiğiniz şifre hatalı yada böyle bir kullanıcı yok");
   }
 };
 

@@ -9,6 +9,7 @@ import Project from '@/views/ProjectView.vue'
 import MyFiles from '@/views/MyFiles.vue'
 // Eğer ana sayfanız varsa
 import Home from '@/views/Home.vue'; 
+import { GetData } from '@/stores/locker';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -77,7 +78,7 @@ const isAdmin = () => {
     // Şimdilik sadece Admin Panel sayfasına gitmeye çalıştığını ve token'ı olduğunu varsayalım.
     // **GÜVENLİK NOTU:** Bu kontrol sadece UI tarafında bir yönlendirmedir. API her zaman sunucu tarafında rolü kontrol edecektir.
     // Rol kontrolünü token'ın içeriğine göre yapmak daha doğrudur.
-    return localStorage.getItem('userRole') === 'Admin'; // Giriş yaparken bu bilgiyi kaydetmeniz gerek
+    return GetData().role === 'Admin'; // Giriş yaparken bu bilgiyi kaydetmeniz gerek
 }
 
 
