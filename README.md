@@ -3,7 +3,7 @@
 > **⚠️ GELİŞTİRME SÜRECİ HAKKINDA NOT**
 >
 > Bu proje şu anda aktif geliştirme aşamasındadır (Work In Progress).
-> Bazı özellikler tamamlanmamış olabilir ve ciddi hatalar (bug) içerebilir.
+> Bazı özellikler tamamlanmamış olabilir ve hatalar (bug) içerebilir.
 > Kullanırken veya incelerken lütfen bunu göz önünde bulundurunuz.
 
 ## 📋 Proje Hakkında
