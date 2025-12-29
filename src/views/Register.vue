@@ -21,14 +21,15 @@
 import { ref } from 'vue';
 import api from '@/services/api';
 import { useRouter } from 'vue-router'; 
-import {useAuthStore} from '@/stores/auth.js'
+import {useAuthStore} from '@/stores/auth.js';
+import MessageBox from "@/components/messagebox.vue";
 const router = useRouter();
 const authStore = useAuthStore(); 
 const email = ref('');
 const password = ref('');
 const error = ref(null);
 const success = ref(null);
-
+const showBox = ref(false);
 const register = async () => {
   // ... (Hata kontrolü)
   try {
@@ -51,6 +52,7 @@ const register = async () => {
  .MainDiv{
   margin:auto;
   margin-top:40px;
+  margin-bottom:100px;
   width:50%;
  }
  

@@ -93,6 +93,7 @@ import modal from "@/components/modal.vue";
 import custominput from "@/components/custominput.vue";
 import { useAuthStore } from "@/stores/auth";
 import DOMPurify from 'dompurify';
+import MessageBox from "@/components/messagebox.vue";
 const authStore = useAuthStore();
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const isAdmin = computed(() => authStore.isAdmin);
@@ -103,7 +104,7 @@ const modalVals = ref({});
 const loading = ref(true);
 const error = ref(null);
 const isModalOpen = ref(false);
-
+const showBox = ref(false);
 const openEditModal = (project) => {
   modalVals.value = { ...project };
   isModalOpen.value = true;

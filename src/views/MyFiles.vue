@@ -47,12 +47,13 @@
 import { ref, onMounted, computed } from "vue";
 import api from "@/services/api.js";
 import FileExplorer from "@/components/FileExplorer.vue"
+import MessageBox from "@/components/messagebox.vue";
 const myfiles = ref([]);
 const mydeletedfiles = ref([]);
 const loading = ref(true);
 const error = ref(null);
 const success = ref(null);
-
+const showBox = ref(false);
 const uploadImage = async (newFile) => {
   console.log(newFile.value);
   try {

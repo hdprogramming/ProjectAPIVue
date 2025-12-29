@@ -49,8 +49,17 @@ const login = async () => {
       </div>
       <button class="btn btn-primary" type="submit">Giriş</button>
     </form>
-    <p v-if="error" class="error-message">{{ error }}</p>
-    <p v-if="success" class="success-message">{{ success }}</p>
+   <MessageBox 
+    v-if="success"  
+    Type="success"
+    :message="success";
+    @close="showBox = false"
+  />   
+  <MessageBox 
+    v-if="error"  
+    Type="error"
+    @close="showBox = false"
+  /> 
   </div></div>
 </template>
 
@@ -60,6 +69,7 @@ const login = async () => {
  .MainDiv{
   margin:auto;
   margin-top:40px;
+  margin-bottom:100px;
   width:50%;
  }
  

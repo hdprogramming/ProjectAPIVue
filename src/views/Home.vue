@@ -1,6 +1,10 @@
 <template>
- <div v-if="loading">Kullanıcılar yükleniyor...</div>
-  <div v-if="error">Hata:{{error}}</div>
+ <MessageBox 
+    v-if="showBox"  
+    :loading="loading" 
+    :error="error"
+    @close="showBox = false"  
+  />  
 <div class="card">
     <div class="card-header">
         <h2 class="card-title">Projeler</h2>
@@ -26,6 +30,14 @@
     </div>
     
     <div class="table-container">
+    <div class="card-navigate">
+        <button class="btn btn-primary" :disabled="ProjectPageNo < 1" @click="PageBack()">
+          Geri
+        </button>
+        <button class="btn btn-primary" v-if="projects.length != 0" @click="PageNext()">
+          Sonraki Sayfa
+        </button>
+      </div>
         <table class="fl-table">
             <thead>
                 <tr>
@@ -51,13 +63,15 @@
                    
                     
                 </tr>
-                
+              
                 <tr v-if="filteredProjects.length === 0 && !loading">
                     <td colspan="9" style="text-align:center; padding: 20px;">
                         Aradığınız kriterlere uygun proje bulunamadı.
                     </td>
                 </tr>
+                
             </tbody>
+              
         </table>
     </div>
      
@@ -100,26 +114,26 @@ import modal from '@/components/modal.vue'
 import CategoryBox from '../components/categoriesbox.vue'
 import custominput from '@/components/custominput.vue'
 import StatusBox from '@/components/statusbox.vue'
+import MessageBox from "@/components/messagebox.vue";
 import { useAuthStore } from "@/stores/auth"; 
 import {  useRouter } from "vue-router";
 const authStore=useAuthStore();
 const router=useRouter();
-const isModalOpen = ref(false);
-const PageNo=ref(1);
-const maxpage=2;
 const modalVals = ref({});
 const loading = ref(true);
 const error = ref(null);
 const success = ref(null);
 const projects = ref([]);
-const pagenext=()=>{
-    if(PageNo.value+1<=maxpage)
-     PageNo.value+=1;
-}
-const pageback=()=>{
-    if(PageNo.value-1>0)
-     PageNo.value-=1;
-}
+const showBox = ref(false);
+const ProjectPageNo = ref(1);
+const PageNext = () => {
+  ProjectPageNo.value += 1;
+  fetchProjects(ProjectPageNo.value);
+};
+const PageBack = () => {
+  if (ProjectPageNo.value - 1 > 0) ProjectPageNo.value -= 1;
+  fetchProjects(ProjectPageNo.value);
+};
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const isAdmin = computed(() => authStore.isAdmin);
 // 1. Filtreleme Değişkenleri
@@ -161,18 +175,18 @@ const openEditModal = (project) => {
    modalVals.value = { ...project };
   isModalOpen.value = true;
 };
-const fetchProjects = async () => {
-    try {
-        loading.value = true;
-        let response = await api.get(`/Projects?page=1`); 
-        projects.value = response.data.filter(item => item.isAlive);
-            
-    } catch (error) {
-        console.error(error);
-    } finally {
-        loading.value = false;
-    }
-}
+const fetchProjects = async (page = 1, length = 4) => {
+  try {    
+    loading.value = true;
+    let response = await api.get(`/Projects/MyProjects?page=${page}&length=${length}`);
+    projects.value = response.data;
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+    showBox.value=false;
+  }
+};
 const updateProject=async(_id)=>{
 try {
         loading.value = true;        
@@ -201,8 +215,8 @@ console.log(updateData);
 
         let response = await api.patch(`/Projects/${_id}`,updateData);        
       
-    } catch (error) {
-        console.error(error);
+    } catch (err) {
+        console.error(err);
          } finally {
         fetchProjects();
         loading.value = false;
@@ -213,8 +227,9 @@ const fetchFiles=async()=>{
   try {
     let response=await api.get("/Uploads/MyFiles");
    console.log(response.data);
-  } catch (error) {
-    
+  
+  } catch (err) {
+    error.value=err;
   }
 }
 onMounted(fetchProjects);

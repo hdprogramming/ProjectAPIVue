@@ -29,6 +29,26 @@
   <main>
     <RouterView />
   </main>
+ <footer class="footer-container">
+    <div class="footer-content">
+    <div class="div4">
+      <div class="brand">
+        <h3>Project<span>API</span></h3>
+      </div>
+      <div>
+      <ul class="nav-links">
+        <li><a href="#">Anasayfa</a></li>
+        <li><a href="#">Servisler</a></li>
+        <li><a href="#">Gizlilik</a></li>
+      </ul>
+      </div>
+      </div>
+
+      <p class="copyright">
+        &copy; {{ currentYear }} ProjectAPI. Tüm hakları saklıdır.
+      </p>
+    </div>
+  </footer>
 </template>
 
 <script setup>
@@ -39,7 +59,7 @@ import { useCategoryStore } from "@/stores/categoryStore";
 import { useStatusStore } from "@/stores/statusStore";
 const categoryStore = useCategoryStore();
 const statusStore = useStatusStore();
-
+const currentYear = computed(() => new Date().getFullYear())
 const router = useRouter();
 const authStore = useAuthStore(); // Store'u kullan
 
@@ -58,7 +78,11 @@ const logout = () => {
 </script>
 
 <style>
-
+.div4{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
 :root {
   --bg-color: #f4f7f6;
   --bar-bg: rgba(255, 255, 255, 0.95);
@@ -366,6 +390,7 @@ input[type="password"]:focus {
 .table-container {
   overflow-x: auto;
 }
+
 .fl-table {
   border-collapse: collapse;
   width: 100%;
@@ -377,13 +402,20 @@ input[type="password"]:focus {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
 .fl-table thead tr {
-  background-color: #009879;
-  color: #ffffff;
-  text-align: left;
+   background: linear-gradient(0deg, rgba(62, 166, 46, 1) 0%, rgba(3, 138, 3, 1) 100%);
+   color: #ffffff;
+  text-align: center;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.9);
 }
-
+th:first-child {
+  border-top-left-radius: 5px;
+}
+th:last-child {
+  border-top-right-radius: 5px;
+}
 .redhead th {
-  background-color: rgb(150, 0, 0) !important;
+   background: linear-gradient(0deg, rgba(166, 62, 46, 1) 0%, rgba(138, 3, 3, 1) 100%);
+  
 }
 .redhead tr:last-of-type {
   border-bottom: 1px solid rgb(150, 0, 0) !important;
@@ -401,16 +433,73 @@ input[type="password"]:focus {
   background-color: #f9f9f9;
 }
 .fl-table tbody tr:hover {
-  background-color: #f1f1f1;
+  background-color: #00cb0e2d;
+  transition:scale(1.005);
+}
+.redhead tbody tr:hover {
+  background-color: #cb000e2d;
+  transition:scale(1.005);
 }
 .fl-table tbody tr:last-of-type {
-  border-bottom: 2px solid #009879;
+  border-bottom: 2px solid rgba(62, 166, 46, 1);
 }
 /* Başlık içindeki aksiyonlar (Filtre + Arama) */
 .header-actions {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.footer-container {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 2rem 0;
+  margin-top: auto; /* Sayfanın en altına iter */
+  font-family: 'Inter', sans-serif;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.brand h3 {  
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.brand span {
+  color: #42b883; /* Vue Yeşili :) */
+}
+
+.nav-links {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #b0b0b0;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #ffffff;
+}
+
+.copyright {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 1rem;
+  border-top: 1px solid #333;
+  padding-top: 1rem;
+  width: 80%;
 }
 /* --- MOBİL UYUMLULUK --- */
 @media (max-width: 900px) {

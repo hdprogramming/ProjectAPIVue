@@ -15,9 +15,16 @@
   </modal>
   <div class="card">
     <h2 class="card-header">Kullanıcı Profili</h2>
-    <div v-if="loading">Yükleniyor...</div>
+   <MessageBox 
+    v-if="showBox"  
+    :loading="loading" 
+    :error="error"
+    :success="success"    
+     @close="showBox = false"  
+  />     
     <div v-else-if="profile">
-      <form class="form-group" @submit.prevent="updateProfile">
+    
+    <form class="form-group" @submit.prevent="updateProfile">
         <div class="avatar-section">
           <div class="avatar-wrapper">
             <img
@@ -53,9 +60,7 @@
         </div>
         <button class="btn btn-primary" type="submit">Profili Güncelle</button>
       </form>
-      <p v-if="error" class="error-message">{{ error }}</p>
-      <p v-if="success" class="success-message">{{ success }}</p>
-    </div>
+      </div>
     <div v-else>Profil bilgileri yüklenemedi veya erişim yetkiniz yok (403/404).</div>
   </div>
 </template>
@@ -81,9 +86,11 @@ import modal from "@/components/modal.vue";
 import custominput from "@/components/custominput.vue";
 import defaultImage from "../assets/image.svg";
 import defaultProfileImage from "../assets/user.png";
+import MessageBox from "@/components/messagebox.vue";
 const previewUrl = ref(defaultImage); // Ekranda görünecek URL
 const newFile = ref();
 // DOM elementine erişmek için boş bir ref oluşturuyoruz
+const showBox=ref(false);
 const fileInputComponent = ref(null);
 const profile = ref(null);
 const newPassword = ref("");
@@ -169,15 +176,13 @@ const fetchProfile = async () => {
 
 const updateProfile = async () => {
   error.value = null;
-  success.value = null;
-
+  success.value = null;  
   if (!currentUserId) return;
 
   // Sadece güncellenecek alanları içeren DTO'yu oluştur
   const updateData = {
     userName: profile.value.userName,
-    bio: profile.value.bio,
-    profileImageUrl: profile.value.profileImageUrl,
+    bio: profile.value.bio,    
   };
 
   // Eğer parola alanı doldurulmuşsa DTO'ya ekle
@@ -186,16 +191,21 @@ const updateProfile = async () => {
   }
 
   try {
+    loading.value=true;
     await api.patch(`/users/TargetUserID`, updateData, {
       params: {
         TargetUserID: currentUserId,
       },
-    }); // PATCH api/users/{id}
+    }); // PATCH api/users/{id}  
+    loading.value=false;  
     success.value = "Profil başarıyla güncellendi!";
-    newPassword.value = ""; // Parolayı temizle
+    showBox.value=true;
+    newPassword.value = ""; // Parolayı temizle    
   } catch (err) {
-    error.value = err.response?.data || "Profil güncellenirken bir hata oluştu.";
-  }
+    error.value = "Profil güncellenirken bir hata oluştu."+err;
+    showBox.value=true;
+    }
+  
 };
 onUnmounted(() => {
   if (previewUrl.value !== defaultImage) {

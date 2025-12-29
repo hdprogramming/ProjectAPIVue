@@ -1,6 +1,13 @@
 <template>
-  <div v-if="loading">Projeler yükleniyor...</div>
-  <div v-if="error">Hata:{{ error }}</div>
+<MessageBox 
+    v-if="showBox"  
+    :loading="loading" 
+    :error="error"
+    :success="success"
+    Message="Projeler Yüklendi"
+    @close="showBox = false"  
+  />    
+ 
   <div class="card">
     <div class="card-header">
       <h2 class="card-title">Proje Yönetimi</h2>
@@ -142,7 +149,7 @@
       </table>
 
       <div class="card-navigate">
-        <button class="btn btn-primary" v-if="ProjectPageNo > 1" @click="PageBack()">
+         <button class="btn btn-primary" :disabled="ProjectPageNo < 1" @click="PageBack()">
           Geri
         </button>
         <button class="btn btn-primary" v-if="projects.length != 0" @click="PageNext()">
@@ -252,6 +259,7 @@ import modal from "@/components/modal.vue";
 import CategoryBox from "../components/categoriesbox.vue";
 import custominput from "@/components/custominput.vue";
 import StatusBox from "@/components/statusbox.vue";
+import MessageBox from "@/components/messagebox.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 const authStore = useAuthStore();
@@ -266,7 +274,7 @@ const projects = ref([]);
 const deletedprojects = ref([]);
 const ModalPageNo = ref(1);
 const ModalMode = ref("Edit");
-
+const showBox = ref(false);
 const ModalPageNext = () => {
   if (ModalPageNo.value + 1 <= maxpage) ModalPageNo.value += 1;
 };
@@ -326,7 +334,7 @@ const openEditModal = (project, mode = "Edit") => {
   isModalOpen.value = true;
 };
 const fetchProjects = async (page = 1, length = 3) => {
-  try {
+  try {    
     loading.value = true;
     let response = await api.get(`/Projects/MyProjects?page=${page}&length=${length}`);
     projects.value = response.data;
@@ -334,6 +342,7 @@ const fetchProjects = async (page = 1, length = 3) => {
     console.error(error);
   } finally {
     loading.value = false;
+    showBox.value=false;
   }
 };
 const fetchDeletedProjects = async (page = 1, length = 10) => {
@@ -377,9 +386,9 @@ const newProject = async () => {
         newProjectData[field] = newValue;
       }
     });
-    console.log(newProjectData);
-    
+    console.log(newProjectData);    
     let response = await api.post(`/Projects/`, newProjectData);
+    success.value="Yeni Proje Oluşturuldu"
   } catch (error) {
     console.error(error);
   } finally {
@@ -425,10 +434,12 @@ const updateProject = async (_id) => {
     });
     console.log(updateData);
     // Sonuç: updateData sadece değişen alanları içerir.
-
+    showBox.value=true;
     let response = await api.patch(`/Projects/${_id}`, updateData);
+    success.value="Değişiklikler kaydedildi";
   } catch (error) {
     console.error(error);
+    error.value=error;    
   } finally {
     fetchProjects();
     loading.value = false;
@@ -474,8 +485,10 @@ const fetchFiles = async () => {
   } catch (error) {}
 };
 const refresh = async () => {
+  
   await fetchProjects();
-  await fetchDeletedProjects();
+  await fetchDeletedProjects(); 
+  
 };
 onMounted(refresh);
 </script>

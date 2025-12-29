@@ -1,6 +1,15 @@
 <template>
-  <div class="admin-panel">
-  <div v-if="loading">Kullanıcılar yükleniyor...</div>
+  <div class="admin-panel"> 
+  <MessageBox 
+    v-if="loading"  
+    Type="loading"
+    @close="showBox = false"
+  />   
+  <MessageBox 
+    v-if="error"  
+    Type="error"
+    @close="showBox = false"
+  /> 
     <modal v-model="isModalOpen">
       <div class="form-group v-stack">
         <h2>Kullanıcı Düzenle</h2>
@@ -95,14 +104,14 @@ import { ref, onMounted } from "vue";
 import api from "@/services/api"; // Yolun doğruluğundan emin ol
 import modal from "../components/modal.vue";
 import custominput from "../components/custominput.vue";
-
+import MessageBox from "@/components/messagebox.vue";
 const isModalOpen = ref(false);
 const modalVals = ref({});
 const users = ref([]);
 const deletedusers = ref([]);
 const loading = ref(true);
 const error = ref(null);
-
+const showBox = ref(false);
 const openEditModal = (user) => {
   modalVals.value = { ...user };
   isModalOpen.value = true;
