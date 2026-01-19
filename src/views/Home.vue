@@ -178,7 +178,7 @@ const openEditModal = (project) => {
 const fetchProjects = async (page = 1, length = 4) => {
   try {    
     loading.value = true;
-    let response = await api.get(`/Projects/MyProjects?page=${page}&length=${length}`);
+    let response = await api.get(`/Projects?page=${page}&length=${length}`);
     projects.value = response.data;
   } catch (error) {
     console.error(error);

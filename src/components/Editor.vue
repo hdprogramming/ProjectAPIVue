@@ -158,12 +158,13 @@ const imageHandler = () => {
 // --- CONFIG ---
 const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],
+  [{ 'color': [] }, { 'background': [] }],
+  [{ 'script': 'sub' }, { 'script': 'super' }],
   ['blockquote', 'code-block'],
   [{ 'header': 1 }, { 'header': 2 }],
   [{ 'list': 'ordered'}, { 'list': 'bullet' }],
   [{ 'size': ['small', false, 'large', 'huge'] }],
-  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-  [{ 'color': [] }, { 'background': [] }],
+  [{ 'header': [1, 2, 3, 4, 5, 6, false] }], 
   [{ 'font': [] }],
   [{ 'align': [] }],
   ['link', 'image', 'video'],

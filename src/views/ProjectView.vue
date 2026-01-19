@@ -39,7 +39,7 @@
       
       <div class="content">
         <div style="display: flex; flex-direction: row">
-           <h2><i class="fa-solid fa-xl" :class="'fa-'+ project.icon"></i> {{ project.title }}</h2>
+           <h2 :style="TitleColor"><i class="fa-solid fa-xl" :class="'fa-'+ project.icon"></i> {{ project.title }}</h2>
         </div>
         <div class="ql-editor" style="margin:10px" v-html="project.content"></div>
       </div>
@@ -105,6 +105,8 @@ const loading = ref(true);
 const error = ref(null);
 const isModalOpen = ref(false);
 const showBox = ref(false);
+const TitleColor=ref("color:red");
+
 const openEditModal = (project) => {
   modalVals.value = { ...project };
   isModalOpen.value = true;
@@ -155,6 +157,8 @@ const init = async (id) => {
     // Gidip veritabanından en taze bilgiyi alıyoruz
     const res = await api.get(`/Projects/${id}`);
     project.value = res.data;
+    TitleColor.value="color:"+getColorWithParser(res.data.content);
+    console.log(TitleColor.value)
   } catch (e) {
     error.value = "Veri çekilemedi";
     console.error(e);
@@ -162,10 +166,24 @@ const init = async (id) => {
     loading.value = false;
   }
 };
+const parser = new DOMParser();
+/*Bu fonksiyon project.content'in içindeki değerden
+başlık rengini bulup stil bütünlüğü bozulmaması için Title rengini ona göre ayarlar*/ 
+function getColorWithParser(htmlText) {
+  // Var olan parser'ı kullanıyoruz
+  const doc = parser.parseFromString(htmlText, 'text/html');
+  
+  // Element kontrolü (Güvenlik önlemi: element yoksa patlamasın)
+  const span = doc.querySelector('h2 span');
+  
+  // Varsa rengi, yoksa null döndür
+  return span ? span.style.color : "black";
+}
+
+
 onMounted(async () => {
   // URL'deki ID'yi al: /detail/152 -> 152
   const id = route.params.id;
-
-  await init(id);
+  await init(id);  
 });
 </script>
